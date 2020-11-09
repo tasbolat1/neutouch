@@ -40,5 +40,26 @@ def read_tac_file(fname):
 	read .tac formatted file
 	"""
 	df = pd.read_csv(fname, names=['isNeg', 'taxel', 'time', 'read_time', 'parse_time'], sep=' ')
-	df.time = df.time - df.time[0]
+	#df.time = df.time - df.time[0]
 	return df.drop(['read_time', 'parse_time'], axis=1)
+
+
+def read_tac_file2(fname, start_time):
+    """returns dataframe of tac file
+    start_time must be provided
+    this is current version
+    read .tac formatted file
+    """
+    df = pd.read_csv(fname, names=['isNeg', 'taxel', 'time', 'read_time', 'parse_time'], sep=' ')
+    df.time = start_time - df.time
+    return df.drop(['read_time', 'parse_time'], axis=1)
+
+def read_robotiq(fname):
+    """returns dataframe of rbtq file and start time
+
+    this is current version
+    read .rbtq formatted file
+    """
+    df = pd.read_csv(fname, names=['time_s', 'time_ns', 'c1', 'c2', 'c3', 'c4', 'c5', 'target', 'current', 'c6'], sep=' ', index_col=False)
+    df = df.assign(time = df.time_s+df.time_ns/1e9)
+    return df[['time', 'target', 'current']], df.time.iloc[-1]
