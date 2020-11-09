@@ -28,7 +28,7 @@ def plot_taxels(x, ax, finger='left'):
         finger_idx = right_taxels_idx
         taxels = right_taxels
     for i, j in x:
-        if i in left_finger_idx:
+        if i in finger_idx:
             empty_taxels[taxels==i] = j
     ax.imshow(empty_taxels, cmap='Blues')
 
@@ -51,7 +51,7 @@ def read_tac_file2(fname, start_time):
     read .tac formatted file
     """
     df = pd.read_csv(fname, names=['isNeg', 'taxel', 'time', 'read_time', 'parse_time'], sep=' ')
-    df.time = start_time - df.time
+    df.time = df.time - start_time
     return df.drop(['read_time', 'parse_time'], axis=1)
 
 def read_robotiq(fname):
@@ -62,4 +62,6 @@ def read_robotiq(fname):
     """
     df = pd.read_csv(fname, names=['time_s', 'time_ns', 'c1', 'c2', 'c3', 'c4', 'c5', 'target', 'current', 'c6'], sep=' ', index_col=False)
     df = df.assign(time = df.time_s+df.time_ns/1e9)
-    return df[['time', 'target', 'current']], df.time.iloc[-1]
+    start_time = df.time[0]
+    df.time = df.time - start_time
+    return df[['time', 'target', 'current']], start_time 
