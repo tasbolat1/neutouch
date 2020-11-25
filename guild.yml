@@ -1,0 +1,44 @@
+- package: vtsnn
+  version: 0.1
+  data-files:
+    - network_config/*
+
+- model: vtsnn
+  operations:
+    train:
+      description: Train the VT-SNN on classification data
+      main: train_snn
+      requires:
+        - config
+      flags:
+        epochs: 100
+        lr: 0.001
+        sample_file: 1
+        batch_size: 8
+        data_dir:
+          required: true
+        finger_type: both
+        variant: 1
+        network_config: network_config/network.yml
+      compare:
+        - =batch_size
+        - =epochs
+        - =lr
+        - =sample_file
+        - =variant
+        - =finger_type
+        - loss/train as loss_train
+        - loss/val as loss_val
+        - loss/test as loss_test
+        - acc/train as acc_train
+        - acc/val as acc_val
+        - acc/test as acc_test
+        - max acc/train as max_acc_train
+        - max acc/val as max_acc_test
+        - max acc/test as max_acc_val
+  resources:
+    config:
+      description: SNN network config yml files
+      sources:
+        - file: network_config
+
